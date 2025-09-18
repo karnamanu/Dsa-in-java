@@ -1,5 +1,5 @@
 public class hollowrectangle {
-    public static  void  hollowrectangle( int rows, int columns){
+    public static  void  hollowRectangle( int rows, int columns){
         for(int i = 1; i<=rows;i++){
             for (int j = 1; j <=columns; j++) {
                 if( i == 1 || i== rows || j == 1 || j == columns ){
@@ -13,6 +13,6 @@ public class hollowrectangle {
 
     }
     public static void main(String[] args) {
-        hollowrectangle(7, 7);
+        hollowRectangle(7, 7);
     }
 }
