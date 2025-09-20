@@ -4,7 +4,7 @@ public class solidrhombus {
     public static void solidRhombus(int n){
         for(int i = 1; i <=n; i++){
             //spaces
-            for(int j = 1; j<= (n-i);j ++){// if i make n+i then it will become hollow rhombus
+            for(int j = 1; j<= (n-i);j ++){// if i make n+i then it will become reverse rhombus
                 System.out.print(" ");
             }
             //stars 
