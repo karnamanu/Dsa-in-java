@@ -1,0 +1,46 @@
+name: AI review for last pushed file
+
+on:
+  push:
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Find the last changed file
+        id: detect_file
+        run: |
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          LAST_FILE=$(echo "$CHANGED_FILES" | tail -n 1)
+          echo "last_file=$LAST_FILE" >> $GITHUB_OUTPUT
+
+      - name: Read the entire file
+        id: read_file
+        run: |
+          cat "${{ steps.detect_file.outputs.last_file }}" > filecontent.txt
+
+      - name: Send code and commit info to AI API
+        run: |
+          USERNAME="${{ github.actor }}"
+          COMMIT_ID="${{ github.sha }}"
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          COMMITTER_EMAIL=$(git log -1 --pretty=format:'%ae')
+          CODE_CONTENT=$(cat filecontent.txt)
+
+          JSON_PAYLOAD=$(jq -n \
+            --arg code "$CODE_CONTENT" \
+            --arg user "$USERNAME" \
+            --arg commitId "$COMMIT_ID" \
+            --arg commitMsg "$COMMIT_MSG" \
+            --arg email "$COMMITTER_EMAIL" \
+            '{code: $code, username: $user, commit_id: $commitId, commit_msg: $commitMsg, email: $email}')
+
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d "$JSON_PAYLOAD" \
+            https://bugfix-backend-cl57.vercel.app/api/analyze
