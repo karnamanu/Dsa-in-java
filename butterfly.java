@@ -36,5 +36,6 @@ public class butterfly {
     }
     public static void main(String[] args) {
         butterFly(5);
+        this line is an error and should not be written
     }
 }
